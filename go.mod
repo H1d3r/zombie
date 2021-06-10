@@ -24,4 +24,3 @@ replace (
 	github.com/go-sql-driver/mysql => ./pkg/github.com/go-sql-driver/mysql
 	github.com/hirochachacha/go-smb2 => ./pkg/github.com/hirochachacha/go-smb2
 )
-
