@@ -61,6 +61,29 @@ var Query = cli.Command{
 	},
 }
 
+var Decrypt = cli.Command{
+	Name:    "Decrypt",
+	Aliases: []string{"D"},
+	Subcommands: []*cli.Command{
+		{
+			Name:    "all",
+			Usage:   "",
+			Aliases: []string{"a"},
+			Action:  Moudle.Decrypt,
+		},
+		{
+			Name:    "Navicat",
+			Aliases: []string{"N"},
+			Action:  Moudle.DeNavicat,
+		},
+		{
+			Name:    "Xshell",
+			Aliases: []string{"x"},
+			Action:  Moudle.DeXshell,
+		},
+	},
+}
+
 func StringFlag(name, alases, value, usage string) *cli.StringFlag {
 	return &cli.StringFlag{
 		Name:    name,
