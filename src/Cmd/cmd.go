@@ -69,12 +69,20 @@ var Decrypt = cli.Command{
 			Name:    "all",
 			Usage:   "",
 			Aliases: []string{"a"},
-			Action:  Moudle.Decrypt,
+			Action:  Moudle.DecryptAll,
 		},
 		{
 			Name:    "Navicat",
 			Aliases: []string{"N"},
 			Action:  Moudle.DeNavicat,
+			Flags: []cli.Flag{
+				&cli.StringFlag{
+					Name:    "cipher",
+					Aliases: []string{"c"},
+					Value:   "",
+					Usage:   "",
+				},
+			},
 		},
 		{
 			Name:    "Xshell",

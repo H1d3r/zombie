@@ -9,6 +9,12 @@ import (
 	"strings"
 )
 
+var XshellPath = map[string]string{
+	"Xshell7": "C:\\Users\\%s\\Documents\\NetSarang Computer\\7",
+	"Xshell6": "C:\\Users\\%s\\Documents\\NetSarang Computer\\6",
+	"Xshell5": "C:\\Users\\%s\\Documents\\NetSarang Computer\\5",
+}
+
 func init_key(username, sid string) []byte {
 	orgin := username + sid
 	c := sha256.New()

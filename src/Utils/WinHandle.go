@@ -3,7 +3,9 @@ package Utils
 import (
 	"Zombie/src/ZbCrypto"
 	"golang.org/x/sys/windows/registry"
+	"os/user"
 	"strconv"
+	"strings"
 )
 
 var ServersRegPath = map[string]string{
@@ -22,6 +24,11 @@ type NavicatInfo struct {
 	Port     string
 	Username string
 	Password string
+}
+
+type UserInfo struct {
+	Username string
+	sid      string
 }
 
 func ReadNavicatReg() (InfoList []NavicatInfo) {
@@ -75,4 +82,21 @@ func ReadNavicatReg() (InfoList []NavicatInfo) {
 
 	}
 	return InfoList
+}
+
+func GetCurInfo() (*UserInfo, error) {
+	u, err := user.Current()
+	if err != nil {
+		return nil, err
+	}
+	Curuser := UserInfo{}
+	Curuser.Username = u.Username
+
+	if strings.Contains(Curuser.Username, "\\") {
+		Namelist := strings.Split(Curuser.Username, "\\")
+		Curuser.Username = Namelist[1]
+	}
+
+	Curuser.sid = u.Uid
+	return &Curuser, nil
 }
