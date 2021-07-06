@@ -13,7 +13,13 @@ func DecryptAll(ctx *cli.Context) (err error) {
 }
 
 func DeXshell(ctx *cli.Context) (err error) {
-
+	if ctx.IsSet("cipher") && ctx.IsSet("version") {
+		plaintext, err := ZbCrypto.DeNavicat(ctx.String("cipher"))
+		if err != nil {
+			return err
+		}
+		fmt.Println("Decrypt result is : " + plaintext)
+	}
 	return err
 }
 

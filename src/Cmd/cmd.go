@@ -88,6 +88,19 @@ var Decrypt = cli.Command{
 			Name:    "Xshell",
 			Aliases: []string{"x"},
 			Action:  Moudle.DeXshell,
+			Flags: []cli.Flag{
+				&cli.StringFlag{
+					Name:    "cipher",
+					Aliases: []string{"c"},
+					Value:   "",
+					Usage:   "",
+				},
+				&cli.Float64Flag{
+					Name:    "version",
+					Aliases: []string{"v"},
+					Usage:   "",
+				},
+			},
 		},
 	},
 }

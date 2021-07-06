@@ -28,7 +28,7 @@ type NavicatInfo struct {
 
 type UserInfo struct {
 	Username string
-	sid      string
+	Sid      string
 }
 
 func ReadNavicatReg() (InfoList []NavicatInfo) {
@@ -97,6 +97,6 @@ func GetCurInfo() (*UserInfo, error) {
 		Curuser.Username = Namelist[1]
 	}
 
-	Curuser.sid = u.Uid
+	Curuser.Sid = u.Uid
 	return &Curuser, nil
 }

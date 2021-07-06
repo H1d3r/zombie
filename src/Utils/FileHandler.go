@@ -3,6 +3,7 @@ package Utils
 import (
 	"math/rand"
 	"os"
+	"strings"
 	"time"
 	"unsafe"
 )
@@ -54,4 +55,10 @@ func RandStringBytesMaskImprSrcUnsafe(n int) string {
 	}
 
 	return *(*string)(unsafe.Pointer(&b))
+}
+
+func HandleReadInfo(input string) string {
+	input = strings.Replace(input, "\r", "", -1)
+	input = strings.Replace(input, "\x00", "", -1)
+	return input
 }
