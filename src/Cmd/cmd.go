@@ -95,6 +95,18 @@ var Decrypt = cli.Command{
 					Value:   "",
 					Usage:   "",
 				},
+				&cli.StringFlag{
+					Name:    "username",
+					Aliases: []string{"u"},
+					Value:   "",
+					Usage:   "",
+				},
+				&cli.StringFlag{
+					Name:    "sid",
+					Aliases: []string{"s"},
+					Value:   "",
+					Usage:   "",
+				},
 				&cli.Float64Flag{
 					Name:    "version",
 					Aliases: []string{"v"},
