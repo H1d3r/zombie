@@ -12,11 +12,21 @@ import (
 )
 
 func DecryptAll(ctx *cli.Context) (err error) {
+	Utils.File = ctx.String("OutputFile")
+	//初始化文件
+
+	if Utils.File != "null" {
+		initFile(Utils.File)
+		go Utils.QueryWrite2File(Utils.FileHandle, Utils.DDatach)
+
+	}
+
 	fmt.Println("Now start Navicat Decrypt")
 	InfoList := ZbCrypto.ReadNavicatReg()
 
 	for _, info := range InfoList {
-		fmt.Println(info)
+		deres := fmt.Sprintf("Name: %v\tServer:%v\nIP:%v\tPort:%v\nUsername:%v\tPassword:%v\n", info.InfoName, info.Type, info.Ip, info.Port, info.Username, info.Password)
+		Utils.DDatach <- deres
 	}
 
 	fmt.Println("Now start Xshell Decrypt")
@@ -30,6 +40,15 @@ func DecryptAll(ctx *cli.Context) (err error) {
 }
 
 func DeXshell(ctx *cli.Context) (err error) {
+	Utils.File = ctx.String("OutputFile")
+	//初始化文件
+
+	if Utils.File != "null" {
+		initFile(Utils.File)
+		go Utils.QueryWrite2File(Utils.FileHandle, Utils.DDatach)
+
+	}
+
 	curinfo := Utils.UserInfo{}
 	if ctx.IsSet("username") {
 		curinfo.Username = ctx.String("username")
@@ -66,6 +85,15 @@ func DeXshell(ctx *cli.Context) (err error) {
 }
 
 func DeNavicat(ctx *cli.Context) (err error) {
+	Utils.File = ctx.String("OutputFile")
+	//初始化文件
+
+	if Utils.File != "null" {
+		initFile(Utils.File)
+		go Utils.QueryWrite2File(Utils.FileHandle, Utils.DDatach)
+
+	}
+
 	if ctx.IsSet("cipher") {
 		plaintext, err := ZbCrypto.DeNavicat(ctx.String("cipher"))
 		if err != nil {
@@ -77,7 +105,8 @@ func DeNavicat(ctx *cli.Context) (err error) {
 	InfoList := ZbCrypto.ReadNavicatReg()
 
 	for _, info := range InfoList {
-		fmt.Println(info)
+		deres := fmt.Sprintf("Name: %v\tServer:%v\nIP:%v\tPort:%v\nUsername:%v\tPassword:%v\n", info.InfoName, info.Type, info.Ip, info.Port, info.Username, info.Password)
+		Utils.DDatach <- deres
 	}
 
 	return err
@@ -86,6 +115,7 @@ func DeNavicat(ctx *cli.Context) (err error) {
 func DecryptXManager(info Utils.UserInfo) {
 
 	var XshellInfoList []*ZbCrypto.XshellInfo
+
 	for _, path := range ZbCrypto.XshellPath {
 		curpath := fmt.Sprintf(path, info.Username)
 		files, _ := ioutil.ReadDir(curpath)
@@ -115,7 +145,8 @@ func DecryptXManager(info Utils.UserInfo) {
 
 		}
 		for _, res := range XshellInfoList {
-			fmt.Printf("Find %s:\nVersion:%s\nUsername: %s\nCipher:%s\nPassword:%s\n\n", res.Name, res.Version, res.UserName, res.Cipher, res.Plain)
+			XManagerInfo := fmt.Sprintf("Find %s:\nVersion:%s\nUsername: %s\nCipher:%s\nPassword:%s\n\n", res.Name, res.Version, res.UserName, res.Cipher, res.Plain)
+			Utils.DDatach <- XManagerInfo
 		}
 	}
 }

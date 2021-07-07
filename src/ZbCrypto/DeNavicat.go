@@ -24,6 +24,7 @@ var ServersRegPath = map[string]string{
 
 type NavicatInfo struct {
 	InfoName string
+	Type     string
 	Ip       string
 	Port     string
 	Username string
@@ -32,7 +33,7 @@ type NavicatInfo struct {
 
 func ReadNavicatReg() (InfoList []NavicatInfo) {
 
-	for _, path := range ServersRegPath {
+	for server, path := range ServersRegPath {
 		key, exists := registry.OpenKey(registry.CURRENT_USER, path, registry.ALL_ACCESS)
 
 		if exists != nil {
@@ -41,7 +42,10 @@ func ReadNavicatReg() (InfoList []NavicatInfo) {
 		keys, _ := key.ReadSubKeyNames(0)
 		for _, key_subkey := range keys {
 			// 输出所有子项的名字
-			NewNavicatInfo := NavicatInfo{InfoName: key_subkey}
+			NewNavicatInfo := NavicatInfo{
+				InfoName: key_subkey,
+				Type:     server,
+			}
 			subkey, subexists := registry.OpenKey(key, key_subkey, registry.ALL_ACCESS)
 			if subexists != nil {
 				continue

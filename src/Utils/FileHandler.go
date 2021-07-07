@@ -14,6 +14,7 @@ var FileHandle *os.File
 var O2File bool
 var BDatach = make(chan OutputRes, 1000)
 var QDatach = make(chan string, 1000)
+var DDatach = make(chan string, 1000)
 
 var (
 	src = rand.NewSource(time.Now().UnixNano())

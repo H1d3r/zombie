@@ -72,6 +72,9 @@ var Decrypt = cli.Command{
 			Usage:   "",
 			Aliases: []string{"a"},
 			Action:  Moudle.DecryptAll,
+			Flags: []cli.Flag{
+				StringFlag("OutputFile", "f", "./DeRes.log", ""),
+			},
 		},
 		{
 			Name:    "Navicat",
@@ -84,6 +87,7 @@ var Decrypt = cli.Command{
 					Value:   "",
 					Usage:   "",
 				},
+				StringFlag("OutputFile", "f", "./DeRes.log", ""),
 			},
 		},
 		{
@@ -114,6 +118,7 @@ var Decrypt = cli.Command{
 					Aliases: []string{"v"},
 					Usage:   "",
 				},
+				StringFlag("OutputFile", "f", "./DeRes.log", ""),
 			},
 		},
 	},
