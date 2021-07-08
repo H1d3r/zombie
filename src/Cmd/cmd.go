@@ -92,7 +92,7 @@ var Decrypt = cli.Command{
 		},
 		{
 			Name:    "Xshell",
-			Aliases: []string{"x"},
+			Aliases: []string{"X"},
 			Action:  Moudle.DeXshell,
 			Flags: []cli.Flag{
 				&cli.StringFlag{

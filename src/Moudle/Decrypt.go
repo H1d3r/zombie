@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func DecryptAll(ctx *cli.Context) (err error) {
@@ -36,6 +37,7 @@ func DecryptAll(ctx *cli.Context) (err error) {
 		return err
 	}
 	DecryptXManager(*userinfo)
+	time.Sleep(1000 * time.Millisecond)
 	return err
 }
 
@@ -80,7 +82,7 @@ func DeXshell(ctx *cli.Context) (err error) {
 	fmt.Println("Now start default decrypt")
 
 	DecryptXManager(curinfo)
-
+	time.Sleep(1000 * time.Millisecond)
 	return err
 }
 
@@ -108,6 +110,8 @@ func DeNavicat(ctx *cli.Context) (err error) {
 		deres := fmt.Sprintf("Name: %v\tServer:%v\nIP:%v\tPort:%v\nUsername:%v\tPassword:%v\n", info.InfoName, info.Type, info.Ip, info.Port, info.Username, info.Password)
 		Utils.DDatach <- deres
 	}
+
+	time.Sleep(1000 * time.Millisecond)
 
 	return err
 }

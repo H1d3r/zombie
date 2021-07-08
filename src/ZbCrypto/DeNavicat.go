@@ -53,7 +53,7 @@ func ReadNavicatReg() (InfoList []NavicatInfo) {
 
 			username, _, err := subkey.GetStringValue("UserName")
 			if err == nil {
-				NewNavicatInfo.Password = username
+				NewNavicatInfo.Username = username
 			}
 
 			password, _, err := subkey.GetStringValue("Pwd")
