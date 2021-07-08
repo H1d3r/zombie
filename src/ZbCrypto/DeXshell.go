@@ -11,12 +11,12 @@ import (
 )
 
 var XshellPath = map[string]string{
-	//"Xshell7": "C:\\Users\\%s\\Documents\\NetSarang Computer\\7\\Xshell\\Sessions",
-	//"Xshell6": "C:\\Users\\%s\\Documents\\NetSarang Computer\\6\\Xshell\\Sessions",
-	//"Xshell5": "C:\\Users\\%s\\Documents\\NetSarang Computer\\5\\Xshell\\Sessions",
-	"Xftp7": "C:\\Users\\%s\\Documents\\NetSarang Computer\\7\\Xftp\\Sessions",
-	"Xftp6": "C:\\Users\\%s\\Documents\\NetSarang Computer\\6\\Xftp\\Sessions",
-	"Xftp5": "C:\\Users\\%s\\Documents\\NetSarang Computer\\5\\Xftp\\Sessions",
+	"Xshell7": "C:\\Users\\%s\\Documents\\NetSarang Computer\\7\\Xshell\\Sessions",
+	"Xshell6": "C:\\Users\\%s\\Documents\\NetSarang Computer\\6\\Xshell\\Sessions",
+	"Xshell5": "C:\\Users\\%s\\Documents\\NetSarang Computer\\5\\Xshell\\Sessions",
+	"Xftp7":   "C:\\Users\\%s\\Documents\\NetSarang Computer\\7\\Xftp\\Sessions",
+	"Xftp6":   "C:\\Users\\%s\\Documents\\NetSarang Computer\\6\\Xftp\\Sessions",
+	"Xftp5":   "C:\\Users\\%s\\Documents\\NetSarang Computer\\5\\Xftp\\Sessions",
 }
 
 type XshellInfo struct {

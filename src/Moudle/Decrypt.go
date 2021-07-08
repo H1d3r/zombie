@@ -137,9 +137,9 @@ func DecryptXManager(info Utils.UserInfo) {
 				}
 				XshellInfo := ZbCrypto.HandleXsh(xsinfo, res)
 				XshellInfo.Name = f.Name()[:len(f.Name())-4]
-				version, err := strconv.Atoi(XshellInfo.Version)
+				version, err := strconv.ParseFloat(XshellInfo.Version, 64)
 				if err == nil {
-					XshellInfo.Plain, err = ZbCrypto.DeXshell(XshellInfo.Cipher, float64(version), info.Username, info.Sid)
+					XshellInfo.Plain, err = ZbCrypto.DeXshell(XshellInfo.Cipher, version, info.Username, info.Sid)
 					if err != nil {
 						XshellInfo.Plain = "Decrypt failed"
 					}
