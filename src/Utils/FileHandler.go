@@ -5,16 +5,13 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"strings"
 	"time"
 	"unsafe"
 )
 
 var FileHandle *os.File
 var O2File bool
-var BDatach = make(chan OutputRes, 1000)
-var QDatach = make(chan string, 1000)
-var DDatach = make(chan string, 1000)
+var TDatach = make(chan interface{}, 1000)
 
 var (
 	src = rand.NewSource(time.Now().UnixNano())
@@ -79,10 +76,4 @@ func RandStringBytesMaskImprSrcUnsafe(n int) string {
 	}
 
 	return *(*string)(unsafe.Pointer(&b))
-}
-
-func HandleReadInfo(input string) string {
-	input = strings.Replace(input, "\r", "", -1)
-	input = strings.Replace(input, "\x00", "", -1)
-	return input
 }

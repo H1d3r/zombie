@@ -2,6 +2,7 @@ package Moudle
 
 import (
 	"Zombie/src/Core"
+	"Zombie/src/Database"
 	"Zombie/src/Utils"
 	"context"
 	"encoding/json"
@@ -67,24 +68,30 @@ func Brute(ctx *cli.Context) (err error) {
 		Core.UPList, _ = Core.GetUAList(uppair)
 	} else {
 
-		if ctx.IsSet("username") || !ctx.IsSet("userdict") {
+		if ctx.IsSet("username") && !ctx.IsSet("userdict") {
 			username := ctx.String("username")
 			UserList = Core.GetUserList(username)
 		} else if ctx.IsSet("userdict") {
 			UserList, _ = Core.ReadUserDict(ctx.String("userdict"))
 		} else {
-			fmt.Println("please input username")
-			os.Exit(0)
+			if defaultuser, ok := Utils.DefaultUserDict[CurServer]; ok {
+				UserList = defaultuser
+			} else if CurServer == "REDIS" {
+				UserList = []string{"aaa"}
+			} else {
+				fmt.Println("please input username")
+				os.Exit(0)
+			}
+
 		}
 
-		if ctx.IsSet("password") || !ctx.IsSet("passdict") {
+		if ctx.IsSet("password") && !ctx.IsSet("passdict") {
 			password := ctx.String("password")
 			PassList = Core.GetPassList(password)
 		} else if ctx.IsSet("passdict") {
 			PassList, _ = Core.ReadPassDict(ctx.String("passdict"))
 		} else {
-			fmt.Println("please input user")
-			os.Exit(0)
+			PassList = Utils.DefaultPasswords
 		}
 	}
 
@@ -96,10 +103,11 @@ func Brute(ctx *cli.Context) (err error) {
 	Utils.Proc = ctx.Int("proc")
 	Utils.FileFormat = ctx.String("type")
 	Utils.File = ctx.String("file")
+	Utils.OutputType = "Brute"
 
 	if Utils.File != "null" {
 		initFile(Utils.File)
-		go Utils.BruteWrite2File(Utils.FileHandle, Utils.BDatach)
+		go Database.QueryWrite3File(Utils.FileHandle, Utils.TDatach)
 	}
 
 	Core.Summary = len(UserList) * len(PassList) * len(IpList)
