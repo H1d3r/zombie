@@ -51,6 +51,8 @@ func DeXshell(ctx *cli.Context) (err error) {
 
 	}
 
+	var userlist []Utils.UserInfo
+
 	curinfo := Utils.UserInfo{}
 	if ctx.IsSet("username") {
 		curinfo.Username = ctx.String("username")
@@ -60,7 +62,9 @@ func DeXshell(ctx *cli.Context) (err error) {
 		curinfo.Sid = ctx.String("sid")
 	}
 
-	if curinfo.Sid == "" {
+	AllUser := ctx.Bool("alluser")
+
+	if curinfo.Sid == "" && !AllUser {
 		userinfo, err := Utils.GetCurInfo()
 		if err != nil {
 			return err
@@ -68,6 +72,9 @@ func DeXshell(ctx *cli.Context) (err error) {
 
 		curinfo.Username = userinfo.Username
 		curinfo.Sid = userinfo.Sid
+		userlist = append(userlist, curinfo)
+	} else {
+		userlist, _ = Utils.GetAllUser()
 	}
 
 	if ctx.IsSet("cipher") && ctx.IsSet("version") {
@@ -81,7 +88,14 @@ func DeXshell(ctx *cli.Context) (err error) {
 	}
 	fmt.Println("Now start default decrypt")
 
-	DecryptXManager(curinfo)
+	for _, user := range userlist {
+		if user.Sid == "" {
+			continue
+		}
+		fmt.Println(user.Username)
+		DecryptXManager(user)
+	}
+
 	time.Sleep(1000 * time.Millisecond)
 	return err
 }

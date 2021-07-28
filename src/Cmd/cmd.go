@@ -119,6 +119,11 @@ var Decrypt = cli.Command{
 					Aliases: []string{"v"},
 					Usage:   "",
 				},
+				&cli.BoolFlag{
+					Name:    "alluser",
+					Aliases: []string{"a"},
+					Value:   false,
+				},
 				StringFlag("OutputFile", "f", "./DeRes.log", ""),
 			},
 		},
