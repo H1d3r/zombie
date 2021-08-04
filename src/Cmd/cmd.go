@@ -128,6 +128,26 @@ var Decrypt = cli.Command{
 				StringFlag("OutputFile", "f", "./DeRes.log", ""),
 			},
 		},
+		{
+			Name:    "Mimi",
+			Aliases: []string{"M"},
+			Action:  Moudle.Mimi,
+			Flags: []cli.Flag{
+				&cli.BoolFlag{
+					Name:    "pass",
+					Aliases: []string{"p"},
+					Value:   true,
+				},
+				&cli.BoolFlag{
+					Name:  "remove",
+					Value: true,
+				},
+				&cli.StringSliceFlag{
+					Name:    "query",
+					Aliases: []string{"q"},
+				},
+			},
+		},
 	},
 }
 

