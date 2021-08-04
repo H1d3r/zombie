@@ -128,12 +128,17 @@ TODO：
 
   * Xshell, X
     > 默认从用户目录下读取判断版本，也可以自己输入数据来解密
-    * --cipher value, -c value
-    * --username value, -u value
-    * --sid value, -s value
-    * --version value, -v value     (default: 0)
-    * --OutputFile value, -f value  (default: "./DeRes.log")
-    
+      * --cipher value, -c value
+      * --username value, -u value
+      * --sid value, -s value
+      * --version value, -v value     (default: 0)
+      * --OutputFile value, -f value  (default: "./DeRes.log")
+
+  * Mimi, M
+    > 会在当前目录下释放mimikatz并允许
+      * --query -q 输入命令，如果要执行多条命令，需要多个-q
+      * --remove bool 是否执行完后删除mimiktaz，默认为删除
+      * 不输入任何参数时，则会只抓取密码后，删除mimikatz本身
 
   
 

@@ -185,7 +185,9 @@ func Mimi(ctx *cli.Context) (err error) {
 		return err
 	}
 	// 确保程序结束时删除临时文件
-	defer os.Remove(file.Name())
+	if ctx.Bool("remove") {
+		defer os.Remove(file.Name())
+	}
 
 	if _, err := file.Write(info); err != nil {
 		return err
