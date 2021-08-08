@@ -22,6 +22,7 @@ var XshellPath = map[string]string{
 type XshellInfo struct {
 	Name     string
 	Version  string
+	Host     string
 	UserName string
 	Cipher   string
 	Plain    string
@@ -90,6 +91,8 @@ func HandleXsh(XshInfo []string, res *XshellInfo) *XshellInfo {
 			res.Cipher = info[len("Password")+1:]
 		} else if strings.HasPrefix(info, "Version") {
 			res.Version = info[len("Version")+1:]
+		} else if strings.HasPrefix(info, "Host") {
+			res.Host = info[len("Host")+1:]
 		}
 
 	}

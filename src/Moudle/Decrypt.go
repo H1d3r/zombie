@@ -163,14 +163,17 @@ func DecryptXManager(info Utils.UserInfo) {
 						XshellInfo.Plain = "Decrypt failed"
 					}
 				}
-				XshellInfoList = append(XshellInfoList, XshellInfo)
+				if XshellInfo.Host != "" {
+					XshellInfoList = append(XshellInfoList, XshellInfo)
+				}
 			}
 
 		}
-		for _, res := range XshellInfoList {
-			XManagerInfo := fmt.Sprintf("Find %s:\nVersion:%s\nUsername: %s\nCipher:%s\nPassword:%s\n\n", res.Name, res.Version, res.UserName, res.Cipher, res.Plain)
-			Utils.DDatach <- XManagerInfo
-		}
+
+	}
+	for _, res := range XshellInfoList {
+		XManagerInfo := fmt.Sprintf("Find %s:\nVersion:%s\nHost:%s\nUsername: %s\nCipher:%s\nPassword:%s\n\n", res.Name, res.Version, res.Host, res.UserName, res.Cipher, res.Plain)
+		Utils.DDatach <- XManagerInfo
 	}
 }
 
