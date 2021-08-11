@@ -131,7 +131,7 @@ var Decrypt = cli.Command{
 		{
 			Name:    "Mimi",
 			Aliases: []string{"M"},
-			Action:  Moudle.Mimi,
+			Action:  Module.Mimi,
 			Flags: []cli.Flag{
 				&cli.BoolFlag{
 					Name:    "pass",

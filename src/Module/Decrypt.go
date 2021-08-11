@@ -1,4 +1,4 @@
-package Moudle
+package Module
 
 import (
 	"Zombie/src/Core"
