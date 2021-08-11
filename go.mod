@@ -3,6 +3,7 @@ module Zombie
 go 1.16
 
 require (
+	github.com/alouca/gologger v0.0.0-20120904114645-7d4b7291de9c // indirect
 	github.com/denisenkom/go-mssqldb v0.9.0
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-sql-driver/mysql v1.6.0

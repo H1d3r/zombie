@@ -1,13 +1,13 @@
 package Cmd
 
 import (
-	"Zombie/src/Moudle"
+	"Zombie/src/Module"
 	"github.com/urfave/cli/v2"
 )
 
 var Brute = cli.Command{
 	Name:    "Brute",
-	Action:  Moudle.Brute,
+	Action:  Module.Brute,
 	Aliases: []string{"B"},
 	Flags: []cli.Flag{
 		StringFlag("username", "u", "", ""),
@@ -30,7 +30,7 @@ var Brute = cli.Command{
 
 var Query = cli.Command{
 	Name:    "Query",
-	Action:  Moudle.Exec,
+	Action:  Module.Exec,
 	Aliases: []string{"Q"},
 	Flags: []cli.Flag{
 		&cli.StringFlag{
@@ -73,7 +73,7 @@ var Decrypt = cli.Command{
 			Name:    "all",
 			Usage:   "",
 			Aliases: []string{"a"},
-			Action:  Moudle.DecryptAll,
+			Action:  Module.DecryptAll,
 			Flags: []cli.Flag{
 				StringFlag("OutputFile", "f", "./DeRes.log", ""),
 			},
@@ -81,7 +81,7 @@ var Decrypt = cli.Command{
 		{
 			Name:    "Navicat",
 			Aliases: []string{"N"},
-			Action:  Moudle.DeNavicat,
+			Action:  Module.DeNavicat,
 			Flags: []cli.Flag{
 				&cli.StringFlag{
 					Name:    "cipher",
@@ -95,7 +95,7 @@ var Decrypt = cli.Command{
 		{
 			Name:    "Xshell",
 			Aliases: []string{"X"},
-			Action:  Moudle.DeXshell,
+			Action:  Module.DeXshell,
 			Flags: []cli.Flag{
 				&cli.StringFlag{
 					Name:    "cipher",
