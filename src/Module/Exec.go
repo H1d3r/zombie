@@ -6,10 +6,12 @@ import (
 	"Zombie/src/Utils"
 	"encoding/json"
 	"fmt"
+	"github.com/panjf2000/ants/v2"
 	"github.com/urfave/cli/v2"
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -91,7 +93,7 @@ func Exec(ctx *cli.Context) (err error) {
 		Ip := IpSlice[0]
 		if ctx.IsSet("server") {
 			ServerName := strings.ToUpper(ctx.String("server"))
-			if _, ok := Utils.ExecPort[ServerName]; ok {
+			if _, ok := Utils.ServerPort[ServerName]; ok {
 				CurServer = ctx.String("server")
 			} else {
 				fmt.Println("the ExecAble isn't be supported")
@@ -107,7 +109,7 @@ func Exec(ctx *cli.Context) (err error) {
 				os.Exit(0)
 			}
 
-			if _, ok := Utils.ExecServer[port]; ok {
+			if _, ok := Utils.PortServer[port]; ok {
 				CurServer = Utils.PortServer[port]
 				fmt.Println("Use default server")
 			} else {
@@ -128,6 +130,7 @@ func Exec(ctx *cli.Context) (err error) {
 			Username: ctx.String("username"),
 			Password: ctx.String("password"),
 			Server:   CurServer,
+			Input:    ctx.String("input"),
 		}
 		CurtaskList = append(CurtaskList, Curtask)
 
@@ -136,6 +139,7 @@ func Exec(ctx *cli.Context) (err error) {
 	Utils.File = ctx.String("OutputFile")
 	Utils.FileFormat = ctx.String("type")
 	Utils.IsAuto = ctx.Bool("auto")
+	Utils.Thread = ctx.Int("thread")
 
 	dir := "./res"
 	exist, _ := Utils.PathExists(dir)
@@ -150,30 +154,42 @@ func Exec(ctx *cli.Context) (err error) {
 	}
 
 	if Utils.File != "null" && Utils.IsAuto {
-		initFile(Utils.File)
+		Utils.InitFile(Utils.File)
 		Utils.OutputType = CurtaskList[0].Server
 		go ExecAble.QueryWrite3File(Utils.FileHandle, Utils.TDatach)
 
 	}
 
+	wgs := &sync.WaitGroup{}
+	scanPool, _ := ants.NewPoolWithFunc(Utils.Thread, func(i interface{}) {
+		par := i.(Utils.ScanTask)
+		StartExec(par)
+		wgs.Done()
+	}, ants.WithExpiryDuration(2*time.Second))
+
 	for _, Curtask := range CurtaskList {
 
-		CurCon := Core.ExecDispatch(Curtask)
+		//CurCon := Core.ExecDispatch(Curtask)
+		//
+		//alive := CurCon.Connect()
+		//
+		//if !alive {
+		//	fmt.Printf("%v:%v can't connect to db\n", Curtask.Info.Ip, Curtask.Info.Port)
+		//	continue
+		//}
+		//
+		//if Utils.IsAuto {
+		//	CurCon.GetInfo()
+		//} else {
+		//	CurCon.SetQuery(ctx.String("input"))
+		//	CurCon.Query()
+		//}
+		wgs.Add(1)
+		_ = scanPool.Invoke(Curtask)
 
-		alive := CurCon.Connect()
-
-		if !alive {
-			fmt.Printf("%v:%v can't connect to db\n", Curtask.Info.Ip, Curtask.Info.Port)
-			continue
-		}
-
-		if Utils.IsAuto {
-			CurCon.GetInfo()
-		} else {
-			CurCon.SetQuery(ctx.String("input"))
-			CurCon.Query()
-		}
 	}
+
+	wgs.Wait()
 
 	time.Sleep(1000 * time.Millisecond)
 	if Utils.FileFormat == "json" {
@@ -187,4 +203,27 @@ func Exec(ctx *cli.Context) (err error) {
 	fmt.Println("All Task Done!!!!")
 
 	return err
+}
+
+func StartExec(task Utils.ScanTask) {
+	CurCon := Core.ExecDispatch(task)
+
+	alive := CurCon.Connect()
+
+	if !alive {
+		fmt.Printf("%v:%v can't connect to target\n", task.Info.Ip, task.Info.Port)
+		return
+	}
+
+	if task.Input != "" {
+
+		CurCon.SetQuery(task.Input)
+
+	}
+
+	if Utils.IsAuto {
+		CurCon.GetInfo()
+	} else {
+		CurCon.Query()
+	}
 }

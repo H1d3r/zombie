@@ -76,18 +76,6 @@ func SnmpConnect(Password string, info Utils.IpInfo) (err error, result bool, db
 	return err, result, g
 }
 
-func SnmpConnectTest(User string, Password string, info Utils.IpInfo) (err error, result Utils.BruteRes) {
-	err, res, g := SnmpConnect(Password, info)
-
-	if err == nil {
-		result.Result = res
-		_ = g.Conn.Close()
-	}
-
-	return err, result
-
-}
-
 func (s *SnmpService) Query() bool {
 	defer s.SnmpCon.Conn.Close()
 
@@ -152,6 +140,15 @@ func (s *SnmpService) Connect() bool {
 		return true
 	}
 	return false
+}
+
+func (s *SnmpService) DisConnect() bool {
+	s.SnmpCon.Conn.Close()
+	return false
+}
+
+func (s *SnmpService) Output(res interface{}) {
+
 }
 
 func (s *SnmpService) GetInfo() bool {

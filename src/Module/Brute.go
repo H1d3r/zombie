@@ -109,7 +109,7 @@ func Brute(ctx *cli.Context) (err error) {
 	Utils.OutputType = "Brute"
 
 	if Utils.File != "null" {
-		initFile(Utils.File)
+		Utils.InitFile(Utils.File)
 		go ExecAble.QueryWrite3File(Utils.FileHandle, Utils.TDatach)
 	}
 
@@ -128,29 +128,6 @@ func Brute(ctx *cli.Context) (err error) {
 	close(Core.CountChan)
 
 	return err
-}
-
-func initFile(Filename string) {
-	var err error
-
-	if Filename != "" {
-		Utils.O2File = true
-		if Utils.CheckFileIsExist(Filename) { //如果文件存在
-			Utils.FileHandle, err = os.OpenFile(Filename, os.O_APPEND|os.O_WRONLY, os.ModeAppend) //打开文件
-			//fmt.Println("文件存在")
-			if err != nil {
-				os.Exit(0)
-			}
-			//io.WriteString(FileHandle, "123")
-		} else {
-			Utils.FileHandle, err = os.Create(Filename) //创建文件
-			//fmt.Println("文件不存在")
-			if err != nil {
-				os.Exit(0)
-			}
-		}
-
-	}
 }
 
 func StartTask(UserList []string, PassList []string, IpList []Utils.IpInfo, CurServer string) error {
@@ -188,9 +165,11 @@ func StartTask(UserList []string, PassList []string, IpList []Utils.IpInfo, CurS
 			Server:   CurServer,
 		}
 
-		err, RanRes := Core.DefaultScan2(RandomTask)
+		CurCon := Core.ExecDispatch(RandomTask)
 
-		if err == nil && RanRes.Result {
+		alive := CurCon.Connect()
+
+		if alive {
 			fmt.Sprintf("%s:%d\t\tusername:%s\tpassword:%s\t%s\tsuccess\n", RandomTask.Info.Ip, RandomTask.Info.Port, RandomTask.Username, RandomTask.Password, RandomTask.Server)
 			fmt.Sprintf("%s:%d\t is it a honeypot?", RandomTask.Info.Ip, RandomTask.Info.Port)
 		}
@@ -236,9 +215,10 @@ func StartTaskSimple(UserList []string, PassList []string, IpList []Utils.IpInfo
 	}
 	wgs.Wait()
 
+	time.Sleep(1000 * time.Millisecond)
+
 	fmt.Println("All Task done")
 
-	time.Sleep(1000 * time.Millisecond)
 	if Utils.FileFormat == "json" {
 		final := Utils.OutputRes{}
 		jsons, errs := json.Marshal(final) //转换成JSON返回的是byte[]

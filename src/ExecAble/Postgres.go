@@ -3,6 +3,7 @@ package ExecAble
 import (
 	"Zombie/src/Utils"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	_ "github.com/lib/pq"
 	"os"
@@ -35,7 +36,7 @@ func (s *PostgresService) GetInfo() bool {
 	res.Count = GetPostgresSummary(s)
 	s.PostgreInf = *res
 	//将结果放入管道
-	Utils.TDatach <- *s
+	s.Output(*s)
 	return true
 }
 
@@ -45,6 +46,25 @@ func (s *PostgresService) SetQuery(query string) {
 
 func (s *PostgresService) SetDbname(db string) {
 	s.Dbname = db
+}
+
+func (s *PostgresService) Output(res interface{}) {
+	finres := res.(PostgresService)
+	PostCollectInfo := ""
+	PostCollectInfo += fmt.Sprintf("IP: %v\tServer: %v\nVersion: %v\nOS: %v\nSummary: %v", finres.Ip, Utils.OutputType, finres.Version, finres.OS, finres.Count)
+	PostCollectInfo += "\n"
+	fmt.Println(PostCollectInfo)
+	switch Utils.FileFormat {
+	case "raw":
+		Utils.TDatach <- PostCollectInfo
+	case "json":
+		jsons, errs := json.Marshal(res)
+		if errs != nil {
+			fmt.Println(errs.Error())
+			return
+		}
+		Utils.TDatach <- jsons
+	}
 }
 
 func PostgresConnect(User string, Password string, info Utils.IpInfo, dbname string) (err error, result bool, db *sql.DB) {
@@ -73,17 +93,6 @@ func PostgresConnect(User string, Password string, info Utils.IpInfo, dbname str
 
 	return err, result, db
 
-}
-
-func PostgresConnectTest(User string, Password string, info Utils.IpInfo) (err error, result Utils.BruteRes) {
-	err, res, db := PostgresConnect(User, Password, info, "postgres")
-
-	if err == nil {
-		result.Result = res
-		_ = db.Close()
-	}
-
-	return err, result
 }
 
 func PostgresQuery(SqlCon *sql.DB, Query string) (err error, Qresult []map[string]string, Columns []string) {
@@ -129,6 +138,11 @@ func (s *PostgresService) Connect() bool {
 		s.SqlCon = db
 		return true
 	}
+	return false
+}
+
+func (s *PostgresService) DisConnect() bool {
+	s.SqlCon.Close()
 	return false
 }
 

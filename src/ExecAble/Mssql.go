@@ -3,6 +3,7 @@ package ExecAble
 import (
 	"Zombie/src/Utils"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	_ "github.com/denisenkom/go-mssqldb"
 	"strconv"
@@ -47,18 +48,6 @@ func MssqlConnect(User string, Password string, info Utils.IpInfo) (err error, r
 	}
 
 	return err, result, db
-}
-
-func MssqlConnectTest(User string, Password string, info Utils.IpInfo) (err error, result Utils.BruteRes) {
-	err, res, db := MssqlConnect(User, Password, info)
-
-	if err == nil {
-		result.Result = res
-		_ = db.Close()
-	}
-
-	return err, result
-
 }
 
 func MssqlQuery(SqlCon *sql.DB, Query string) (err error, Qresult []map[string]string, Columns []string) {
@@ -111,6 +100,11 @@ func (s *MssqlService) Connect() bool {
 	return false
 }
 
+func (s *MssqlService) DisConnect() bool {
+	s.SqlCon.Close()
+	return false
+}
+
 func (s *MssqlService) GetInfo() bool {
 	defer s.SqlCon.Close()
 
@@ -127,9 +121,31 @@ func (s *MssqlService) GetInfo() bool {
 	res = GetMssqlVulnableInfo(s.SqlCon, res)
 	s.MssqlInf = *res
 	//将结果放入管道
-	Utils.TDatach <- *s
+	s.Output(*s)
 
 	return true
+}
+
+func (s *MssqlService) Output(res interface{}) {
+	finres := res.(MssqlService)
+	MsCollectInfo := ""
+	MsCollectInfo += fmt.Sprintf("IP: %v\tServer: %v\nVersion: %v\nOS: %v\nSummary: %v", finres.Ip, Utils.OutputType, finres.Version, finres.OS, finres.Count)
+	MsCollectInfo += fmt.Sprintf("\nSP_OACREATE: %v", finres.SP_OACREATE)
+	MsCollectInfo += fmt.Sprintf("\nxp_cmdshell: %v", finres.XpCmdShell)
+	MsCollectInfo += "\n"
+	fmt.Println(MsCollectInfo)
+	switch Utils.FileFormat {
+	case "raw":
+		Utils.TDatach <- MsCollectInfo
+	case "json":
+
+		jsons, errs := json.Marshal(res)
+		if errs != nil {
+			fmt.Println(errs.Error())
+			return
+		}
+		Utils.TDatach <- jsons
+	}
 }
 
 func GetMssqlSummary(SqlCon *sql.DB) int {

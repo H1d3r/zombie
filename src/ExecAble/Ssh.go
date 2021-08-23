@@ -4,7 +4,11 @@ import (
 	"Zombie/src/Utils"
 	"fmt"
 	"golang.org/x/crypto/ssh"
+	"io/ioutil"
+	"log"
 	"net"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -26,7 +30,38 @@ func (s *SshService) Connect() bool {
 	return false
 }
 
+func (s *SshService) DisConnect() bool {
+	s.SshCon.Close()
+	return false
+}
+
 func (s *SshService) GetInfo() bool {
+
+	if s.Cmd != "" {
+		session, err := s.SshCon.NewSession()
+		defer session.Close()
+		defer s.SshCon.Close()
+		cmd := "ping -c 5 " + s.Cmd
+		buf, err := session.Output(cmd)
+
+		if err != nil {
+			return false
+		}
+
+		re, _ := regexp.Compile(`\d received`)
+
+		FindRes := string(re.Find([]byte(buf)))
+
+		reslist := strings.Split(FindRes, " ")
+		if reslist[1] == "received" {
+			if reslist[0] != "0" {
+				fmt.Printf("%v can reach %v\n", s.Ip, s.Cmd)
+			}
+		}
+	} else {
+		panic("Please input ip")
+	}
+
 	return true
 }
 
@@ -39,13 +74,17 @@ func (s *SshService) Query() bool {
 	session, err := s.SshCon.NewSession()
 	defer session.Close()
 	defer s.SshCon.Close()
-	buf, err := session.Output("ping -c 3 114.114.114.114")
+	buf, err := session.Output(s.Cmd)
 
 	if err != nil {
 		return false
 	}
 	fmt.Println(string(buf))
 	return true
+}
+
+func (s *SshService) Output(res interface{}) {
+
 }
 
 func SSHConnect(User string, Password string, info Utils.IpInfo) (err error, result bool, connect *ssh.Client) {
@@ -73,13 +112,16 @@ func SSHConnect(User string, Password string, info Utils.IpInfo) (err error, res
 	return err, result, connect
 }
 
-func SSHConnectTest(User string, Password string, info Utils.IpInfo) (err error, result Utils.BruteRes) {
-	err, res, conn := SSHConnect(User, Password, info)
+func publicKeyAuthFunc(kPath string) ssh.AuthMethod {
 
-	if err == nil {
-		result.Result = res
-		conn.Close()
+	key, err := ioutil.ReadFile(kPath)
+	if err != nil {
+		log.Fatal("ssh key file read failed", err)
 	}
-
-	return err, result
+	// Create the Signer for this private key.
+	signer, err := ssh.ParsePrivateKey(key)
+	if err != nil {
+		log.Fatal("ssh key signer failed", err)
+	}
+	return ssh.PublicKeys(signer)
 }
