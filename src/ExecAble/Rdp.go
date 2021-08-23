@@ -1,12 +1,12 @@
 package ExecAble
 
 /*
-//linux编译环境配置
-#cgo darwin CFLAGS: -DCGO_OS_DARWIN=1
-#cgo darwin CFLAGS: -I../../pkg/lib/mac/freerdp2/include/freerdp2
-#cgo darwin CFLAGS: -I../../pkg/lib/mac/freerdp2/include/winpr2
-#cgo darwin LDFLAGS: -L${SRCDIR}/../../pkg/lib/mac/freerdp2/lib
-#cgo darwin LDFLAGS: -lfreerdp2 -lwinpr2 -lssl -lcrypto
+//windows编译环境配置
+#cgo windows CFLAGS: -DCGO_OS_WINDOWS=1
+#cgo windows CFLAGS: -I../../pkg/lib/windows/freerdp2/include/freerdp2
+#cgo windows CFLAGS: -I../../pkg/lib/windows/freerdp2/include/winpr2
+#cgo windows LDFLAGS: -L${SRCDIR}/../../pkg/lib/windows/freerdp2/lib
+#cgo windows LDFLAGS: -lfreerdp2 -lwinpr2
 
    #if defined(CGO_OS_WINDOWS)
    	//static char* os = "windows";

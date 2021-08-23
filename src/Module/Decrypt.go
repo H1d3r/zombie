@@ -22,7 +22,7 @@ func DecryptAll(ctx *cli.Context) (err error) {
 	//初始化文件
 
 	if Utils.File != "null" {
-		initFile(Utils.File)
+		Utils.InitFile(Utils.File)
 		go Utils.QueryWrite2File(Utils.FileHandle, Utils.DDatach)
 
 	}
@@ -51,7 +51,7 @@ func DeXshell(ctx *cli.Context) (err error) {
 	//初始化文件
 
 	if Utils.File != "null" {
-		initFile(Utils.File)
+		Utils.InitFile(Utils.File)
 		go Utils.QueryWrite2File(Utils.FileHandle, Utils.DDatach)
 
 	}
@@ -110,7 +110,7 @@ func DeNavicat(ctx *cli.Context) (err error) {
 	//初始化文件
 
 	if Utils.File != "null" {
-		initFile(Utils.File)
+		Utils.InitFile(Utils.File)
 		go Utils.QueryWrite2File(Utils.FileHandle, Utils.DDatach)
 
 	}
